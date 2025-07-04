@@ -26,7 +26,7 @@ async function fetchFromHadithAPI(endpoint: string): Promise<{ data: any } | { e
     }
 
     try {
-        const url = `${API_BASE_URL}/${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}`;
+        const url = `${API_BASE_URL}/${endpoint}${endpoint.includes('?') ? '&' : '?'}apiKey=${API_KEY}`;
         const response = await fetch(url);
 
         if (!response.ok) {
