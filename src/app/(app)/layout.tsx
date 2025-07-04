@@ -11,10 +11,11 @@ import {
   SidebarInset,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { Moon } from 'lucide-react';
+import { Moon as AppIcon } from 'lucide-react';
 import { LanguageProvider, useLanguage } from '@/context/language-context';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useEffect, ReactNode } from 'react';
+import { ThemeSwitcher } from '@/components/theme-switcher';
 
 function LayoutWithLang({ children }: { children: ReactNode }) {
   const { direction } = useLanguage();
@@ -25,15 +26,19 @@ function LayoutWithLang({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar side={direction === 'rtl' ? 'right' : 'left'}>
         <SidebarHeader>
           <div className="flex items-center gap-2">
-            <Moon className="w-7 h-7 text-primary" />
+            <AppIcon className="w-7 h-7 text-primary" />
             <h1 className="text-xl font-semibold font-headline">Noor</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
           <MainNav />
+        </SidebarContent>
+        <SidebarContent className="!flex-grow-0">
+          <SheetTitle className="sr-only">Sidebar Menu</SheetTitle>
+          <SheetDescription className="sr-only">Contains the main navigation links for the application.</SheetDescription>
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
@@ -42,6 +47,7 @@ function LayoutWithLang({ children }: { children: ReactNode }) {
           <div className="w-full flex-1">
             {/* Can add breadcrumbs or search here */}
           </div>
+          <ThemeSwitcher />
           <LanguageSwitcher />
           <UserNav />
         </header>
