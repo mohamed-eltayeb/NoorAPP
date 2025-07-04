@@ -4,6 +4,7 @@ import { DhikrOfTheDay } from "@/components/dhikr-of-the-day";
 import { HadithOfTheDay } from "@/components/hadith-of-the-day";
 import { UpcomingEvents } from "@/components/upcoming-events";
 import { TasbeehCard } from "@/components/tasbeeh-card";
+import { PrayerTrackerCard } from "@/components/prayer-tracker-card";
 
 export default function DashboardPage() {
   const now = new Date();
@@ -30,6 +31,7 @@ export default function DashboardPage() {
         
         <div className="space-y-6">
           <PrayerTimesCard />
+          <PrayerTrackerCard />
           <TasbeehCard />
           <DhikrOfTheDay />
           <UpcomingEvents />

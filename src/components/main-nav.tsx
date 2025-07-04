@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bookmark,
   CalendarDays,
+  CheckSquare,
   HeartHandshake,
   LayoutDashboard,
   MessageSquareHeart,
@@ -52,6 +53,11 @@ export function MainNav() {
       href: '/tasbeeh',
       label: menuTranslations.tasbeeh[language],
       icon: React.createElement(Repeat),
+    },
+    {
+      href: '/prayer-tracker',
+      label: menuTranslations.prayerTracker[language],
+      icon: React.createElement(CheckSquare),
     },
     {
       href: '/imam',
