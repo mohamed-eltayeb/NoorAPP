@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { surahs } from "@/lib/placeholder-data";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
+import Link from "next/link";
 
 export default function QuranPage() {
   return (
@@ -30,10 +31,12 @@ export default function QuranPage() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">
-                <BookOpen className="mr-2 h-4 w-4"/>
-                Read Surah
-              </Button>
+              <Link href={`/quran/${surah.number}`} passHref className="w-full">
+                <Button className="w-full">
+                  <BookOpen className="mr-2 h-4 w-4"/>
+                  Read Surah
+                </Button>
+              </Link>
             </CardFooter>
           </Card>
         ))}

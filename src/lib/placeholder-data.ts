@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Moon, ScrollText, Sun, SunMedium, Sunrise, Sunset } from "lucide-react";
+import { BookOpen, Bookmark, Calendar, LayoutDashboard, Moon, ScrollText, Sun, SunMedium, Sunrise, Sunset } from "lucide-react";
 
 export const prayerTimes = [
     { name: 'Fajr', time: '04:30', icon: React.createElement(Sunrise, { className: "w-5 h-5" }) },
@@ -151,3 +151,74 @@ export const islamicEvents = [
     { date: '2024-07-07', name: 'Islamic New Year', color: 'hsl(var(--primary))' },
     { date: '2024-07-16', name: 'Day of Ashura', color: 'hsl(var(--secondary-foreground))' },
 ];
+
+export const quranDetails = [
+  {
+    "id": 1,
+    "name": "Al-Fatiha",
+    "transliteration": "Al-Fātiḥah",
+    "translation": "The Opening",
+    "type": "meccan",
+    "total_verses": 7,
+    "verses": [
+      {
+        "id": 1,
+        "text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+        "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful."
+      },
+      {
+        "id": 2,
+        "text": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+        "translation": "All praise is due to Allah, Lord of the worlds -"
+      },
+      {
+        "id": 3,
+        "text": "الرَّحْمَٰنِ الرَّحِيمِ",
+        "translation": "The Entirely Merciful, the Especially Merciful,"
+      },
+      {
+        "id": 4,
+        "text": "مَالِكِ يَوْمِ الدِّينِ",
+        "translation": "Sovereign of the Day of Recompense."
+      },
+      {
+        "id": 5,
+        "text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+        "translation": "It is You we worship and You we ask for help."
+      },
+      {
+        "id": 6,
+        "text": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+        "translation": "Guide us to the straight path -"
+      },
+      {
+        "id": 7,
+        "text": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+        "translation": "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray."
+      }
+    ]
+  }
+];
+
+export function getSurahDetails(surahNumber: number) {
+  if (surahNumber === 1) {
+    return quranDetails[0];
+  }
+  
+  const surahInfo = surahs.find(s => s.number === surahNumber);
+  if (!surahInfo) return null;
+
+  return {
+    id: surahInfo.number,
+    name: surahInfo.name,
+    transliteration: surahInfo.name,
+    translation: "The " + surahInfo.name,
+    type: surahInfo.revelationPlace.toLowerCase(),
+    total_verses: surahInfo.versesCount,
+    verses: Array.from({ length: surahInfo.versesCount }, (_, i) => ({
+      id: i + 1,
+      text: `[Arabic text for ${surahInfo.name} verse ${i + 1}]`,
+      translation: `[Translation for ${surahInfo.name} verse ${i + 1}]`
+    }))
+  }
+}
