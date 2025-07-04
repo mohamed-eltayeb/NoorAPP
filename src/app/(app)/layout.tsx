@@ -1,3 +1,6 @@
+
+'use client';
+
 import { MainNav } from '@/components/main-nav';
 import { UserNav } from '@/components/user-nav';
 import {
@@ -9,8 +12,17 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Moon } from 'lucide-react';
+import { LanguageProvider, useLanguage } from '@/context/language-context';
+import { LanguageSwitcher } from '@/components/language-switcher';
+import { useEffect, ReactNode } from 'react';
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+function LayoutWithLang({ children }: { children: ReactNode }) {
+  const { direction } = useLanguage();
+
+  useEffect(() => {
+    document.documentElement.dir = direction;
+  }, [direction]);
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -30,10 +42,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="w-full flex-1">
             {/* Can add breadcrumbs or search here */}
           </div>
+          <LanguageSwitcher />
           <UserNav />
         </header>
         <main className="flex-1 p-4 lg:p-6">{children}</main>
       </SidebarInset>
     </SidebarProvider>
+  );
+}
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <LanguageProvider>
+      <LayoutWithLang>{children}</LayoutWithLang>
+    </LanguageProvider>
   );
 }

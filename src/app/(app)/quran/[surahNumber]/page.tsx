@@ -11,10 +11,12 @@ import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react';
+import { useLanguage } from '@/context/language-context';
 
 export default function SurahPage() {
     const params = useParams();
     const { toast } = useToast();
+    const { language, direction } = useLanguage();
     const surahNumber = Number(params.surahNumber);
     const surahInfo = surahs.find(s => s.number === surahNumber);
     const surahDetails = getSurahDetails(surahNumber);
@@ -32,7 +34,7 @@ export default function SurahPage() {
             if (!audioUrl) {
                 setIsLoadingAudio(true);
                 try {
-                    const fullSurahText = surahDetails.verses.map(v => v.text).join('\n\n');
+                    const fullSurahText = surahDetails.verses.map(v => v.translations[language]).join('\n\n');
                     const response = await textToSpeech(fullSurahText);
                     setAudioUrl(response.media);
                 } catch (error) {
@@ -52,6 +54,16 @@ export default function SurahPage() {
         }
     };
     
+    useEffect(() => {
+        // Reset audio when language changes
+        if (audioRef.current) {
+            audioRef.current.pause();
+        }
+        setAudioUrl(null);
+        setIsPlaying(false);
+        setIsLoadingAudio(false);
+    }, [language])
+
     useEffect(() => {
         if (audioUrl && audioRef.current && !isPlaying) {
             audioRef.current.play().then(() => {
@@ -79,9 +91,9 @@ export default function SurahPage() {
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <div>
-                            <CardTitle className="font-headline text-3xl">{surahInfo.name} ({surahInfo.nameArabic})</CardTitle>
+                            <CardTitle className="font-headline text-3xl">{surahInfo.name[language]} ({surahInfo.name.ar})</CardTitle>
                             <CardDescription>
-                                {surahInfo.revelationPlace} - {surahInfo.versesCount} verses
+                                {surahInfo.revelationPlace[language]} - {surahInfo.versesCount} verses
                             </CardDescription>
                         </div>
                         <Button onClick={handlePlayPause} disabled={isLoadingAudio} size="icon" variant="ghost" className="text-primary h-12 w-12 shrink-0">
@@ -96,7 +108,7 @@ export default function SurahPage() {
                                 <div className="flex flex-col gap-4">
                                      <p className="text-sm text-muted-foreground font-semibold bg-muted/50 w-fit px-2 py-1 rounded-md">Verse {verse.id}</p>
                                      <p className="text-2xl md:text-3xl font-serif text-right leading-loose tracking-wide">{verse.text}</p>
-                                     <p className="text-lg text-muted-foreground italic">&ldquo;{verse.translation}&rdquo;</p>
+                                     <p className="text-lg text-muted-foreground italic" lang={language} dir={direction}>&ldquo;{verse.translations[language]}&rdquo;</p>
                                 </div>
                                 {index < surahDetails.verses.length - 1 && <Separator className="my-8"/>}
                             </div>

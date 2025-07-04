@@ -1,10 +1,15 @@
+'use client';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { surahs } from "@/lib/placeholder-data";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
 
 export default function QuranPage() {
+  const { language } = useLanguage();
+
   return (
     <div className="space-y-6">
       <div>
@@ -20,14 +25,14 @@ export default function QuranPage() {
                 {surah.number}
               </div>
               <div className="text-right">
-                <CardTitle className="font-headline">{surah.name}</CardTitle>
-                <CardDescription className="font-serif text-lg">{surah.nameArabic}</CardDescription>
+                <CardTitle className="font-headline">{surah.name[language]}</CardTitle>
+                <CardDescription className="font-serif text-lg">{surah.name.ar}</CardDescription>
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
               <div className="text-sm text-muted-foreground">
                 <p>Verses: {surah.versesCount}</p>
-                <p>Revelation: {surah.revelationPlace}</p>
+                <p>Revelation: {surah.revelationPlace[language]}</p>
               </div>
             </CardContent>
             <CardFooter>
