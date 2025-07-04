@@ -13,8 +13,8 @@ const ImamInputSchema = z.object({
 });
 
 export async function askImam(question: string): Promise<string> {
-  const {output} = await imamFlow({question});
-  return output!;
+  const response = await imamFlow({question});
+  return response;
 }
 
 const prompt = ai.definePrompt({
