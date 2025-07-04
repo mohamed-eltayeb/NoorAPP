@@ -17,17 +17,15 @@ export default function HadithPage() {
 
   useEffect(() => {
     const fetchCollections = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await getHadithCollections();
+      setLoading(true);
+      setError(null);
+      const data = await getHadithCollections();
+      if ('error' in data) {
+        setError(data.error);
+      } else {
         setCollections(data);
-      } catch (e: any) {
-        setError(e.message || "Failed to load Hadith collections. The API might be down or your API key may be missing.");
-        console.error(e);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
     fetchCollections();
   }, []);

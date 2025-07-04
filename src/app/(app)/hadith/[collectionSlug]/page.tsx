@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { getHadithsByCollection, Hadith } from '@/services/hadith-service';
+import { getHadithsByCollection, getHadithCollectionDetails, Hadith } from '@/services/hadith-service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Bookmark, Copy, Terminal } from 'lucide-react';
@@ -22,28 +22,38 @@ export default function HadithCollectionPage() {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchHadiths = async () => {
+        const fetchData = async () => {
             if (!collectionSlug) return;
-            try {
-                setLoading(true);
-                setError(null);
-                const data = await getHadithsByCollection(collectionSlug);
-                setHadiths(data);
-                if (data.length > 0) {
-                    const firstHadith = data[0];
-                    const collection = firstHadith.collection;
-                    const response = await fetch(`https://api.sunnah.com/v1/collections/${collection}`, { headers: {'X-API-Key': process.env.NEXT_PUBLIC_SUNNAH_API_KEY || ''}});
-                    const collectionData = await response.json();
-                    setCollectionTitle(collectionData.data.title);
-                }
-            } catch (e: any) {
-                setError(e.message || `Failed to load hadiths for ${collectionSlug}.`);
-                console.error(e);
-            } finally {
-                setLoading(false);
+            
+            setLoading(true);
+            setError(null);
+
+            const [hadithResult, collectionResult] = await Promise.all([
+                getHadithsByCollection(collectionSlug),
+                getHadithCollectionDetails(collectionSlug)
+            ]);
+
+            let hasError = false;
+            if ('error' in hadithResult) {
+                setError(hadithResult.error);
+                hasError = true;
+            } else {
+                setHadiths(hadithResult);
             }
+
+            if ('error' in collectionResult) {
+                // If hadiths loaded but title failed, we can still proceed.
+                // If hadiths failed, we already set the error.
+                if (!hasError) {
+                    console.error("Failed to load collection title:", collectionResult.error);
+                }
+            } else {
+                setCollectionTitle(collectionResult.title);
+            }
+            
+            setLoading(false);
         };
-        fetchHadiths();
+        fetchData();
     }, [collectionSlug]);
 
     if (loading) {

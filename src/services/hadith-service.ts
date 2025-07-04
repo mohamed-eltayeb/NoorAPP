@@ -27,37 +27,49 @@ export interface Hadith {
 }
 
 const API_BASE_URL = 'https://api.sunnah.com/v1';
-const API_KEY = process.env.SUNNAH_API_KEY;
 
-async function fetchFromSunnahAPI(endpoint: string) {
+async function fetchFromSunnahAPI(endpoint: string): Promise<{ data: any } | { error: string }> {
+    const API_KEY = process.env.NEXT_PUBLIC_SUNNAH_API_KEY;
+
     if (!API_KEY) {
-        throw new Error("Sunnah.com API key is missing. Please add it to your .env file.");
+        return { error: "Sunnah.com API key is missing. Please add the NEXT_PUBLIC_SUNNAH_API_KEY to your .env file and restart the server." };
     }
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-        headers: { 'X-API-Key': API_KEY }
-    });
-    if (!response.ok) {
-        throw new Error(`Failed to fetch from Sunnah.com API: ${response.statusText}`);
-    }
-    return response.json();
-}
 
-export async function getHadithCollections(): Promise<HadithCollection[]> {
     try {
-        const data = await fetchFromSunnahAPI('collections');
-        return data.data;
-    } catch (error) {
-        console.error("Error fetching Hadith collections:", error);
-        return [];
+        const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+            headers: { 'X-API-Key': API_KEY }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            return { error: errorData.message || `API request failed: ${response.statusText}` };
+        }
+        return response.json();
+    } catch (e: any) {
+        return { error: "A network error occurred while fetching Hadith data. Please check your connection." };
     }
 }
 
-export async function getHadithsByCollection(collectionSlug: string, page = 1, limit = 25): Promise<Hadith[]> {
-    try {
-        const data = await fetchFromSunnahAPI(`collections/${collectionSlug}/hadiths?limit=${limit}&page=${page}`);
-        return data.data;
-    } catch (error) {
-        console.error(`Error fetching Hadiths for ${collectionSlug}:`, error);
-        return [];
+export async function getHadithCollections(): Promise<HadithCollection[] | { error: string }> {
+    const result = await fetchFromSunnahAPI('collections');
+    if ('error' in result) {
+        return result;
     }
+    return result.data;
+}
+
+export async function getHadithCollectionDetails(collectionSlug: string): Promise<HadithCollection | { error: string }> {
+    const result = await fetchFromSunnahAPI(`collections/${collectionSlug}`);
+    if ('error' in result) {
+        return result;
+    }
+    return result.data;
+}
+
+export async function getHadithsByCollection(collectionSlug: string, page = 1, limit = 25): Promise<Hadith[] | { error: string }> {
+    const result = await fetchFromSunnahAPI(`collections/${collectionSlug}/hadiths?limit=${limit}&page=${page}`);
+    if ('error' in result) {
+        return result;
+    }
+    return result.data;
 }
