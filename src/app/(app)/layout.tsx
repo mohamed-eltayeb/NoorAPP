@@ -16,6 +16,7 @@ import { LanguageProvider, useLanguage } from '@/context/language-context';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { useEffect, ReactNode } from 'react';
 import { ThemeSwitcher } from '@/components/theme-switcher';
+import { SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 function LayoutWithLang({ children }: { children: ReactNode }) {
   const { direction } = useLanguage();
@@ -35,10 +36,6 @@ function LayoutWithLang({ children }: { children: ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
           <MainNav />
-        </SidebarContent>
-        <SidebarContent className="!flex-grow-0">
-          <SheetTitle className="sr-only">Sidebar Menu</SheetTitle>
-          <SheetDescription className="sr-only">Contains the main navigation links for the application.</SheetDescription>
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
