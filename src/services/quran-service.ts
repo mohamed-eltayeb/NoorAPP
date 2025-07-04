@@ -60,24 +60,28 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails> {
     const frenchEdition = data.data.find((e: any) => e.identifier === 'fr.hamidullah');
     const audioEdition = data.data.find((e: any) => e.identifier === 'ar.alafasy');
 
-    // Make the french edition optional to prevent crashes if the API doesn't return it.
-    if (!arabicEdition || !englishEdition || !audioEdition) {
-        throw new Error(`One or more required editions (Arabic, English, Audio) not found for Surah ${surahNumber}`);
+    // The Arabic text is essential. If it's missing, we cannot render the page.
+    if (!arabicEdition) {
+        throw new Error(`The essential Arabic text edition was not found for Surah ${surahNumber}. This might be a temporary API issue.`);
     }
 
-    const verses: Verse[] = arabicEdition.ayahs.map((ayah: any, index: number) => ({
-      id: ayah.number, // The unique number for the verse in the whole Quran
-      numberInSurah: ayah.numberInSurah,
-      text: ayah.text,
-      juz: ayah.juz,
-      hizbQuarter: ayah.hizbQuarter,
-      audio: audioEdition.ayahs[index].audio,
-      translations: {
-        en: englishEdition.ayahs[index].text,
-        // Fallback to English if the French translation is not available from the API for this surah
-        fr: frenchEdition ? frenchEdition.ayahs[index].text : englishEdition.ayahs[index].text,
+    const verses: Verse[] = arabicEdition.ayahs.map((ayah: any, index: number) => {
+      const englishText = englishEdition ? englishEdition.ayahs[index].text : "Translation not available.";
+      const frenchText = frenchEdition ? frenchEdition.ayahs[index].text : englishText; // Fallback French to English if not available
+
+      return {
+          id: ayah.number,
+          numberInSurah: ayah.numberInSurah,
+          text: ayah.text,
+          juz: ayah.juz,
+          hizbQuarter: ayah.hizbQuarter,
+          audio: audioEdition ? audioEdition.ayahs[index].audio : '', // Provide empty string if no audio
+          translations: {
+            en: englishText,
+            fr: frenchText,
+          }
       }
-    }));
+    });
 
     return {
       number: arabicEdition.number,

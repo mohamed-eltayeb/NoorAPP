@@ -29,7 +29,7 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
 
     const handlePlayPause = (verse: Verse) => {
         const audio = audioRef.current;
-        if (!audio) return;
+        if (!audio || !verse.audio) return;
 
         // If clicking the verse that is currently playing
         if (playingVerseId === verse.id) {
@@ -135,6 +135,7 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
                                             size="icon" 
                                             variant="ghost" 
                                             className="text-primary w-8 h-8 shrink-0"
+                                            disabled={!verse.audio}
                                         >
                                             {playingVerseId === verse.id && isAudioPlaying ? <PauseCircle /> : <PlayCircle />}
                                         </Button>
