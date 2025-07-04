@@ -1,6 +1,6 @@
 
 export const menuTranslations = {
-    dashboard: { en: 'Dashboard', ar: 'لوحة القيادة', fr: 'Tableau de bord' },
+    dashboard: { en: 'Home', ar: 'الرئيسية', fr: 'Accueil' },
     quran: { en: 'Quran', ar: 'القرآن', fr: 'Coran' },
     hadith: { en: 'Hadith', ar: 'الحديث', fr: 'Hadith' },
     athkar: { en: 'Athkar', ar: 'الأذكار', fr: 'Athkar' },

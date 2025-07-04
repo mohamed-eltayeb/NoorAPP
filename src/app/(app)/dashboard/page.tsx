@@ -3,6 +3,7 @@ import { PrayerTimesCard } from "@/components/prayer-times-card";
 import { DhikrOfTheDay } from "@/components/dhikr-of-the-day";
 import { HadithOfTheDay } from "@/components/hadith-of-the-day";
 import { UpcomingEvents } from "@/components/upcoming-events";
+import { TasbeehCard } from "@/components/tasbeeh-card";
 
 export default function DashboardPage() {
   const now = new Date();
@@ -17,7 +18,7 @@ export default function DashboardPage() {
     <div className="flex-1 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold font-headline tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold font-headline tracking-tight">Home</h1>
           <p className="text-muted-foreground">{formattedDate}</p>
         </div>
       </div>
@@ -29,6 +30,7 @@ export default function DashboardPage() {
         
         <div className="space-y-6">
           <PrayerTimesCard />
+          <TasbeehCard />
           <DhikrOfTheDay />
           <UpcomingEvents />
         </div>
