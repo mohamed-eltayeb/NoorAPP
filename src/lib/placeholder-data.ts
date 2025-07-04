@@ -1,19 +1,6 @@
 import React from 'react';
 import { BookOpen, Bookmark, Calendar, LayoutDashboard, Moon, ScrollText, Sun, SunMedium, Sunrise, Sunset } from "lucide-react";
 
-export const prayerTimes = [
-    { name: 'Fajr', time: '04:30', icon: React.createElement(Sunrise, { className: "w-5 h-5" }) },
-    { name: 'Dhuhr', time: '12:45', icon: React.createElement(Sun, { className: "w-5 h-5" }) },
-    { name: 'Asr', time: '16:15', icon: React.createElement(SunMedium, { className: "w-5 h-5" }) },
-    { name: 'Maghrib', time: '19:00', icon: React.createElement(Sunset, { className: "w-5 h-5" }) },
-    { name: 'Isha', time: '20:30', icon: React.createElement(Moon, { className: "w-5 h-5" }) },
-];
-
-export const qiblaDirection = {
-    degrees: 128,
-    direction: 'SE'
-};
-
 const revelationPlaces = {
     Mecca: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
     Medina: { en: 'Medinan', ar: 'مدنية', fr: 'Médinoise' },
