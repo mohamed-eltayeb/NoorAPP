@@ -6,6 +6,7 @@ export const menuTranslations = {
     athkar: { en: 'Athkar', ar: 'الأذكار', fr: 'Athkar' },
     tasbeeh: { en: 'Tasbeeh', ar: 'التسبيح', fr: 'Tasbih' },
     prayerTracker: { en: 'Prayer Tracker', ar: 'متتبع الصلاة', fr: 'Suivi de Prière' },
+    zakat: { en: 'Zakat Calculator', ar: 'حاسبة الزكاة', fr: 'Calculatrice de Zakat' },
     imam: { en: 'AI Imam', ar: 'إمام الذكاء الاصطناعي', fr: 'IA Imam' },
     calendar: { en: 'Calendar', ar: 'التقويم', fr: 'Calendrier' },
     bookmarks: { en: 'Bookmarks', ar: 'الإشارات المرجعية', fr: 'Favoris' },

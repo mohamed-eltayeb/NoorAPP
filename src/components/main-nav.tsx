@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -7,6 +8,7 @@ import {
   Bookmark,
   CalendarDays,
   CheckSquare,
+  HandCoins,
   HeartHandshake,
   LayoutDashboard,
   MessageSquareHeart,
@@ -58,6 +60,11 @@ export function MainNav() {
       href: '/prayer-tracker',
       label: menuTranslations.prayerTracker[language],
       icon: React.createElement(CheckSquare),
+    },
+    {
+      href: '/zakat',
+      label: menuTranslations.zakat[language],
+      icon: React.createElement(HandCoins),
     },
     {
       href: '/imam',
