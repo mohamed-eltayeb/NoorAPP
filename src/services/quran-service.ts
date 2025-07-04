@@ -60,8 +60,9 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails> {
     const frenchEdition = data.data.find((e: any) => e.identifier === 'fr.hamidullah');
     const audioEdition = data.data.find((e: any) => e.identifier === 'ar.alafasy');
 
-    if (!arabicEdition || !englishEdition || !frenchEdition || !audioEdition) {
-        throw new Error(`One or more required editions not found for Surah ${surahNumber}`);
+    // Make the french edition optional to prevent crashes if the API doesn't return it.
+    if (!arabicEdition || !englishEdition || !audioEdition) {
+        throw new Error(`One or more required editions (Arabic, English, Audio) not found for Surah ${surahNumber}`);
     }
 
     const verses: Verse[] = arabicEdition.ayahs.map((ayah: any, index: number) => ({
@@ -73,7 +74,8 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails> {
       audio: audioEdition.ayahs[index].audio,
       translations: {
         en: englishEdition.ayahs[index].text,
-        fr: frenchEdition.ayahs[index].text,
+        // Fallback to English if the French translation is not available from the API for this surah
+        fr: frenchEdition ? frenchEdition.ayahs[index].text : englishEdition.ayahs[index].text,
       }
     }));
 
