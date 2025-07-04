@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/daily-verse.ts';
 import '@/ai/flows/tts.ts';
+import '@/ai/flows/imam-flow.ts';

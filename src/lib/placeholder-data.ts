@@ -27,7 +27,7 @@ export const surahs = [
     { number: 10, name: 'Yunus', nameArabic: 'يونس', versesCount: 109, revelationPlace: 'Mecca' },
     { number: 11, name: 'Hud', nameArabic: 'هود', versesCount: 123, revelationPlace: 'Mecca' },
     { number: 12, name: 'Yusuf', nameArabic: 'يوسف', versesCount: 111, revelationPlace: 'Mecca' },
-    { number: 13, name: 'Ar-Rad', nameArabic: 'الرعد', versesCount: 43, revelationPlace: 'Medina' },
+    { number: 13, name: 'Ar-Rad', nameArabic: 'الرعد', versesCount: 43, revelationPlace: 'Mecca' },
     { number: 14, name: 'Ibrahim', nameArabic: 'ابراهيم', versesCount: 52, revelationPlace: 'Mecca' },
     { number: 15, name: 'Al-Hijr', nameArabic: 'الحجر', versesCount: 99, revelationPlace: 'Mecca' },
     { number: 16, name: 'An-Nahl', nameArabic: 'النحل', versesCount: 128, revelationPlace: 'Mecca' },
@@ -118,18 +118,19 @@ export const surahs = [
     { number: 101, name: 'Al-Qariah', nameArabic: 'القارعة', versesCount: 11, revelationPlace: 'Mecca' },
     { number: 102, name: 'At-Takathur', nameArabic: 'التكاثر', versesCount: 8, revelationPlace: 'Mecca' },
     { number: 103, name: 'Al-Asr', nameArabic: 'العصر', versesCount: 3, revelationPlace: 'Mecca' },
-    { number: 104, name: 'Al-Humazah', nameArabic: 'الهمزة', versesCount: 9, revelationPlace: 'Mecca' },
-    { number: 105, name: 'Al-Fil', nameArabic: 'الفيل', versesCount: 5, revelationPlace: 'Mecca' },
-    { number: 106, name: 'Quraysh', nameArabic: 'قريش', versesCount: 4, revelationPlace: 'Mecca' },
-    { number: 107, name: 'Al-Maun', nameArabic: 'الماعون', versesCount: 7, revelationPlace: 'Mecca' },
-    { number: 108, name: 'Al-Kawthar', nameArabic: 'الكوثر', versesCount: 3, revelationPlace: 'Mecca' },
-    { number: 109, name: 'Al-Kafirun', nameArabic: 'الكافرون', versesCount: 6, revelationPlace: 'Mecca' },
-    { number: 110, name: 'An-Nasr', nameArabic: 'النصر', versesCount: 3, revelationPlace: 'Medina' },
-    { number: 111, name: 'Al-Masad', nameArabic: 'المسد', versesCount: 5, revelationPlace: 'Mecca' },
-    { number: 112, name: 'Al-Ikhlas', nameArabic: 'الإخلاص', versesCount: 4, revelationPlace: 'Mecca' },
-    { number: 113, name: 'Al-Falaq', nameArabic: 'الفلق', versesCount: 5, revelationPlace: 'Mecca' },
-    { number: 114, name: 'An-Nas', nameArabic: 'الناس', versesCount: 6, revelationPlace: 'Mecca' },
+    { number: 104, 'name': 'Al-Humazah', 'nameArabic': 'الهمزة', 'versesCount': 9, 'revelationPlace': 'Mecca' },
+    { number: 105, 'name': 'Al-Fil', 'nameArabic': 'الفيل', 'versesCount': 5, 'revelationPlace': 'Mecca' },
+    { number: 106, 'name': 'Quraysh', 'nameArabic': 'قريش', 'versesCount': 4, 'revelationPlace': 'Mecca' },
+    { number: 107, 'name': 'Al-Maun', 'nameArabic': 'الماعون', 'versesCount': 7, 'revelationPlace': 'Mecca' },
+    { number: 108, 'name': 'Al-Kawthar', 'nameArabic': 'الكوثر', 'versesCount': 3, 'revelationPlace': 'Mecca' },
+    { number: 109, 'name': 'Al-Kafirun', 'nameArabic': 'الكافرون', 'versesCount': 6, 'revelationPlace': 'Mecca' },
+    { number: 110, 'name': 'An-Nasr', 'nameArabic': 'النصر', 'versesCount': 3, 'revelationPlace': 'Medina' },
+    { number: 111, 'name': 'Al-Masad', 'nameArabic': 'المسد', 'versesCount': 5, 'revelationPlace': 'Mecca' },
+    { number: 112, 'name': 'Al-Ikhlas', 'nameArabic': 'الإخلاص', 'versesCount': 4, 'revelationPlace': 'Mecca' },
+    { number: 113, 'name': 'Al-Falaq', 'nameArabic': 'الفلق', 'versesCount': 5, 'revelationPlace': 'Mecca' },
+    { number: 114, 'name': 'An-Nas', 'nameArabic': 'الناس', 'versesCount': 6, 'revelationPlace': 'Mecca' }
 ];
+
 
 export const hadithCollections = [
     { name: 'Sahih al-Bukhari', total: 7563, icon: React.createElement(ScrollText) },
@@ -151,6 +152,37 @@ export const islamicEvents = [
     { date: '2024-07-07', name: 'Islamic New Year', color: 'hsl(var(--primary))' },
     { date: '2024-07-16', name: 'Day of Ashura', color: 'hsl(var(--secondary-foreground))' },
 ];
+
+export const athkar = {
+    morning: [
+        {
+          title: 'Ayat al-Kursi',
+          arabic: 'ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ',
+          translation: 'Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.',
+          reference: 'Recite once. Al-Baqarah 2:255',
+        },
+        {
+          title: 'Protection from Evil',
+          arabic: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
+          translation: 'I seek refuge in the perfect words of Allah from the evil of that which He has created.',
+          reference: 'Recite three times. Muslim',
+        },
+    ],
+    evening: [
+        {
+          title: 'The Last Two Verses of Al-Baqarah',
+          arabic: 'ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ...',
+          translation: 'The Messenger has believed in what was revealed to him from his Lord, and [so have] the believers. All of them have believed in Allah and His angels and His books and His messengers, [saying], "We make no distinction between any of His messengers." And they say, "We hear and we obey. [We seek] Your forgiveness, our Lord, and to You is the [final] destination...',
+          reference: 'Recite once. Al-Baqarah 2:285-286',
+        },
+        {
+          title: 'Praise and Gratitude',
+          arabic: 'اللَّهُمَّ مَا أَمْسَى بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ',
+          translation: 'O Allah, whatever blessing has been received by me or anyone of Your creation is from You alone, You have no partner. For You is all praise and for You is all thanks.',
+          reference: 'Recite once. Abu Dawud',
+        }
+    ]
+}
 
 export const quranDetails = [
   {
