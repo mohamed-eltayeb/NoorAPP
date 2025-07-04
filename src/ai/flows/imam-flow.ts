@@ -12,11 +12,15 @@ const ImamInputSchema = z.object({
   question: z.string().describe('The user question for the AI Imam.'),
 });
 
+// The wrapper function is what the UI calls.
 export async function askImam(question: string): Promise<string> {
+  // It calls the Genkit flow, passing the question inside an object
+  // to match the flow's input schema.
   const response = await imamFlow({question});
   return response;
 }
 
+// Define the prompt that will be sent to the Gemini model.
 const prompt = ai.definePrompt({
   name: 'imamPrompt',
   input: {schema: ImamInputSchema},
@@ -30,6 +34,7 @@ const prompt = ai.definePrompt({
   User question: {{{question}}}.`,
 });
 
+// Define the Genkit flow that orchestrates the AI call.
 const imamFlow = ai.defineFlow(
   {
     name: 'imamFlow',
@@ -37,7 +42,13 @@ const imamFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async input => {
+    // Call the prompt with the input from the flow.
     const {output} = await prompt(input);
-    return output!;
+    
+    // The Gemini model might return a null or undefined output if it can't
+    // generate a response (e.g., due to safety filters). We handle this
+    // by providing a default message to ensure the flow always returns a string,
+    // satisfying the output schema.
+    return output ?? "I'm sorry, I was unable to process your question at the moment. Please try rephrasing it.";
   }
 );
