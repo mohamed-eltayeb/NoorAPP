@@ -36,22 +36,25 @@ export async function getSurahs(): Promise<SurahListItem[]> {
   try {
     const response = await fetch('https://api.alquran.cloud/v1/surah');
     if (!response.ok) {
-      throw new Error('Failed to fetch surahs');
+      console.error('Failed to fetch surahs list from API');
+      return [];
     }
     const data = await response.json();
-    return data.data;
+    return data.data || [];
   } catch (error) {
     console.error('Error fetching surahs:', error);
-    throw error;
+    return [];
   }
 }
 
-export async function getSurah(surahNumber: number): Promise<SurahDetails> {
+export async function getSurah(surahNumber: number): Promise<SurahDetails | null> {
   try {
     // Fetch multiple editions: Arabic text, English/French translations, and Arabic audio
     const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,en.sahih,fr.hamidullah,ar.alafasy`);
     if (!response.ok) {
-      throw new Error(`Failed to fetch surah ${surahNumber}`);
+       // If the API itself returns an error (e.g., 404, 500), log it and return null.
+      console.error(`API error fetching surah ${surahNumber}: ${response.statusText}`);
+      return null;
     }
     const data = await response.json();
     
@@ -62,7 +65,8 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails> {
 
     // The Arabic text is essential. If it's missing, we cannot render the page.
     if (!arabicEdition) {
-        throw new Error(`The essential Arabic text edition was not found for Surah ${surahNumber}. This might be a temporary API issue.`);
+        console.error(`The essential Arabic text edition was not found for Surah ${surahNumber}.`);
+        return null;
     }
 
     const verses: Verse[] = arabicEdition.ayahs.map((ayah: any, index: number) => {
@@ -93,7 +97,7 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails> {
     };
 
   } catch (error) {
-    console.error(`Error fetching surah ${surahNumber}:`, error);
-    throw error;
+    console.error(`Failed to process data for surah ${surahNumber}:`, error);
+    return null;
   }
 }

@@ -27,21 +27,19 @@ export default async function SurahPage({ params }: { params: { surahNumber: str
     );
   }
 
-  try {
-    const surahDetails = await getSurah(surahNumber);
-    if (!surahDetails) {
-        throw new Error("Surah details not found.");
-    }
-    // We render the interactive client component and pass the fetched data to it.
-    return <SurahView surahDetails={surahDetails} />;
-  } catch (error) {
-    console.error(error);
+  const surahDetails = await getSurah(surahNumber);
+
+  // If the API call fails or doesn't return the necessary data, show an error message.
+  if (!surahDetails) {
     return (
       <Alert variant="destructive">
         <Terminal className="h-4 w-4" />
         <AlertTitle>Error Loading Surah</AlertTitle>
-        <AlertDescription>Failed to load the details for this Surah. Please try again later.</AlertDescription>
+        <AlertDescription>Failed to load the details for this Surah. The API might be temporarily unavailable. Please try again later.</AlertDescription>
       </Alert>
     );
   }
+  
+  // We render the interactive client component and pass the fetched data to it.
+  return <SurahView surahDetails={surahDetails} />;
 }
