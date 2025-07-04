@@ -1,17 +1,16 @@
+
 'use client';
 
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { CheckSquare, Moon, Sun, SunMedium, Sunrise, Sunset } from 'lucide-react';
-
-// Define types for prayer tracking state
-type Prayer = 'Fajr' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
-const PRAYERS: Prayer[] = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+import { CheckSquare, Moon, Sun, SunMedium, Sunrise, Sunset, User, Users, XCircle } from 'lucide-react';
+import { usePrayerTracker, PRAYERS, Prayer, PrayerStatus } from '@/context/prayer-tracker-context';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 const prayerIcons: Record<Prayer, React.ReactElement> = {
     Fajr: <Sunrise className="w-5 h-5 text-muted-foreground" />,
@@ -21,8 +20,11 @@ const prayerIcons: Record<Prayer, React.ReactElement> = {
     Isha: <Moon className="w-5 h-5 text-muted-foreground" />,
 };
 
-type PrayerStatus = Record<Prayer, boolean>;
-type PrayerLog = Record<string, PrayerStatus>; // Key is 'YYYY-MM-DD'
+const statusOptions: {value: PrayerStatus, label: string, icon: React.ReactElement}[] = [
+    { value: 'jamaah', label: "Jama'ah", icon: <Users className="w-4 h-4" /> },
+    { value: 'alone', label: "Alone", icon: <User className="w-4 h-4" /> },
+    { value: 'missed', label: "Missed", icon: <XCircle className="w-4 h-4" /> },
+];
 
 // Helper to format date to 'YYYY-MM-DD'
 const formatDate = (date: Date): string => {
@@ -31,32 +33,24 @@ const formatDate = (date: Date): string => {
 
 export default function PrayerTrackerPage() {
     const [date, setDate] = useState<Date | undefined>(new Date());
-    const [prayerLog, setPrayerLog] = useState<PrayerLog>({});
+    const { prayerLog, updatePrayerStatus } = usePrayerTracker();
 
     const selectedDateKey = date ? formatDate(date) : '';
-
-    const dailyStatus = useMemo((): PrayerStatus => {
+    
+    const dailyStatus = useMemo(() => {
         return prayerLog[selectedDateKey] || {
-            Fajr: false,
-            Dhuhr: false,
-            Asr: false,
-            Maghrib: false,
-            Isha: false,
+            Fajr: 'unprayed', Dhuhr: 'unprayed', Asr: 'unprayed', Maghrib: 'unprayed', Isha: 'unprayed'
         };
     }, [prayerLog, selectedDateKey]);
 
-    const handlePrayerToggle = (prayer: Prayer, checked: boolean) => {
+
+    const handlePrayerStatusChange = (prayer: Prayer, status: PrayerStatus) => {
         if (!date) return;
-        
-        const newLog = { ...prayerLog };
-        const dayLog = newLog[selectedDateKey] || { Fajr: false, Dhuhr: false, Asr: false, Maghrib: false, Isha: false };
-        dayLog[prayer] = checked;
-        newLog[selectedDateKey] = dayLog;
-        setPrayerLog(newLog);
+        updatePrayerStatus(selectedDateKey, prayer, status);
     };
 
     const prayersCompleted = useMemo(() => {
-        return Object.values(dailyStatus).filter(Boolean).length;
+        return Object.values(dailyStatus).filter(status => status === 'jamaah' || status === 'alone').length;
     }, [dailyStatus]);
 
     const progressPercentage = (prayersCompleted / PRAYERS.length) * 100;
@@ -90,22 +84,35 @@ export default function PrayerTrackerPage() {
                             {date ? date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Select a date'}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-2">
+                    <CardContent className="space-y-4">
                         {PRAYERS.map((prayer, index) => (
                             <div key={prayer}>
-                                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50">
+                                <div className="flex flex-col gap-4 p-3 rounded-lg hover:bg-muted/50">
                                     <div className="flex items-center gap-4">
                                         {prayerIcons[prayer]}
-                                        <Label htmlFor={prayer} className="text-lg font-medium cursor-pointer">
+                                        <Label htmlFor={prayer} className="text-lg font-medium">
                                             {prayer}
                                         </Label>
                                     </div>
-                                    <Checkbox
+                                    <RadioGroup
                                         id={prayer}
-                                        checked={dailyStatus[prayer]}
-                                        onCheckedChange={(checked) => handlePrayerToggle(prayer, !!checked)}
-                                        className="h-6 w-6"
-                                    />
+                                        value={dailyStatus[prayer]}
+                                        onValueChange={(value) => handlePrayerStatusChange(prayer, value as PrayerStatus)}
+                                        className="grid grid-cols-2 sm:grid-cols-4 gap-2"
+                                    >
+                                        {statusOptions.map(opt => (
+                                             <div key={opt.value}>
+                                                <RadioGroupItem value={opt.value} id={`${prayer}-${opt.value}`} className="peer sr-only" />
+                                                <Label htmlFor={`${prayer}-${opt.value}`} className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                                                    {opt.icon}
+                                                    {opt.label}
+                                                </Label>
+                                            </div>
+                                        ))}
+                                         <div>
+                                            <RadioGroupItem value="unprayed" id={`${prayer}-unprayed`} className="peer sr-only" />
+                                        </div>
+                                    </RadioGroup>
                                 </div>
                                 {index < PRAYERS.length - 1 && <Separator />}
                             </div>

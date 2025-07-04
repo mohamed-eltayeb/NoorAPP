@@ -17,6 +17,7 @@ import { LanguageSwitcher } from '@/components/language-switcher';
 import { useEffect, ReactNode } from 'react';
 import { ThemeSwitcher } from '@/components/theme-switcher';
 import { BottomNav } from '@/components/bottom-nav';
+import { PrayerTrackerProvider } from '@/context/prayer-tracker-context';
 
 function LayoutWithLang({ children }: { children: ReactNode }) {
   const { language, direction } = useLanguage();
@@ -59,7 +60,9 @@ function LayoutWithLang({ children }: { children: ReactNode }) {
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <LayoutWithLang>{children}</LayoutWithLang>
+      <PrayerTrackerProvider>
+        <LayoutWithLang>{children}</LayoutWithLang>
+      </PrayerTrackerProvider>
     </LanguageProvider>
   );
 }
