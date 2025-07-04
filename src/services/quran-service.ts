@@ -10,9 +10,12 @@ export interface SurahListItem {
 
 // Type for a single verse with translations
 export interface Verse {
-  id: number;
+  id: number; // This will be the unique number of the verse in the Quran
   numberInSurah: number;
   text: string; // Arabic text
+  audio: string; // URL for the audio recitation
+  juz: number;
+  hizbQuarter: number;
   translations: {
     en: string;
     fr: string;
@@ -45,20 +48,29 @@ export async function getSurahs(): Promise<SurahListItem[]> {
 
 export async function getSurah(surahNumber: number): Promise<SurahDetails> {
   try {
-    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,en.sahih,fr.hamidullah`);
+    // Fetch multiple editions: Arabic text, English/French translations, and Arabic audio
+    const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,en.sahih,fr.hamidullah,ar.alafasy`);
     if (!response.ok) {
       throw new Error(`Failed to fetch surah ${surahNumber}`);
     }
     const data = await response.json();
     
-    const arabicEdition = data.data[0];
-    const englishEdition = data.data[1];
-    const frenchEdition = data.data[2];
+    const arabicEdition = data.data.find((e: any) => e.identifier === 'quran-uthmani');
+    const englishEdition = data.data.find((e: any) => e.identifier === 'en.sahih');
+    const frenchEdition = data.data.find((e: any) => e.identifier === 'fr.hamidullah');
+    const audioEdition = data.data.find((e: any) => e.identifier === 'ar.alafasy');
+
+    if (!arabicEdition || !englishEdition || !frenchEdition || !audioEdition) {
+        throw new Error(`One or more required editions not found for Surah ${surahNumber}`);
+    }
 
     const verses: Verse[] = arabicEdition.ayahs.map((ayah: any, index: number) => ({
-      id: ayah.numberInSurah,
+      id: ayah.number, // The unique number for the verse in the whole Quran
       numberInSurah: ayah.numberInSurah,
       text: ayah.text,
+      juz: ayah.juz,
+      hizbQuarter: ayah.hizbQuarter,
+      audio: audioEdition.ayahs[index].audio,
       translations: {
         en: englishEdition.ayahs[index].text,
         fr: frenchEdition.ayahs[index].text,

@@ -2,16 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlayCircle, PauseCircle, Loader, Eye, EyeOff } from 'lucide-react';
+import { PlayCircle, PauseCircle, Eye, EyeOff } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
-import { textToSpeech } from '@/ai/flows/tts';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/context/language-context';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import type { SurahDetails } from '@/services/quran-service';
+import type { SurahDetails, Verse } from '@/services/quran-service';
 
 const revelationPlaceTranslations = {
   Meccan: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
@@ -20,66 +18,65 @@ const revelationPlaceTranslations = {
 
 // This is the Client Component that handles all user interaction.
 export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
-    const { toast } = useToast();
     const { language, direction } = useLanguage();
     
-    const [audioUrl, setAudioUrl] = useState<string | null>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [isLoadingAudio, setIsLoadingAudio] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
-
+    const [playingVerseId, setPlayingVerseId] = useState<number | null>(null);
+    const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+    
     const [memorizationMode, setMemorizationMode] = useState(false);
     const [revealedVerses, setRevealedVerses] = useState<Set<number>>(new Set());
 
-    const handlePlayPause = async () => {
-        if (isPlaying) {
-            audioRef.current?.pause();
-            setIsPlaying(false);
-        } else {
-            if (!audioUrl) {
-                if (!surahDetails) return;
-                setIsLoadingAudio(true);
-                try {
-                    const fullSurahText = surahDetails.verses.map(v => v.translations[language]).join(' ');
-                    const response = await textToSpeech(fullSurahText);
-                    setAudioUrl(response.media);
-                } catch (error) {
-                    console.error("Failed to generate audio:", error);
-                    toast({
-                        variant: "destructive",
-                        title: "Audio Error",
-                        description: "Failed to generate audio for this Surah.",
-                    });
-                } finally {
-                    setIsLoadingAudio(false);
-                }
+    const handlePlayPause = (verse: Verse) => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        // If clicking the verse that is currently playing
+        if (playingVerseId === verse.id) {
+            if (isAudioPlaying) {
+                audio.pause();
             } else {
-                audioRef.current?.play();
-                setIsPlaying(true);
+                audio.play();
             }
+        } else { // If clicking a new verse
+            setPlayingVerseId(verse.id);
+            audio.src = verse.audio;
+            audio.play();
         }
     };
     
     useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            audioRef.current.src = "";
+        const audio = audioRef.current;
+        if (!audio) return;
+        
+        const onPlay = () => setIsAudioPlaying(true);
+        const onPause = () => setIsAudioPlaying(false);
+        const onEnded = () => {
+            setIsAudioPlaying(false);
+            setPlayingVerseId(null);
+        };
+
+        audio.addEventListener('play', onPlay);
+        audio.addEventListener('pause', onPause);
+        audio.addEventListener('ended', onEnded);
+        
+        return () => {
+            audio.removeEventListener('play', onPlay);
+            audio.removeEventListener('pause', onPause);
+            audio.removeEventListener('ended', onEnded);
         }
-        setAudioUrl(null);
-        setIsPlaying(false);
-        setIsLoadingAudio(false);
-    }, [language, surahDetails.number]);
+    }, []);
 
     useEffect(() => {
-        if (audioUrl && audioRef.current && !isPlaying) {
-            audioRef.current.play().then(() => {
-                setIsPlaying(true);
-            }).catch(e => {
-                console.error("Audio play failed", e);
-                setIsPlaying(false);
-            });
+        // Stop audio when switching surahs
+        const audio = audioRef.current;
+        if(audio) {
+            audio.pause();
+            audio.src = '';
         }
-    }, [audioUrl, isPlaying]);
+        setPlayingVerseId(null);
+        setIsAudioPlaying(false);
+    }, [surahDetails.number]);
     
     useEffect(() => {
         setRevealedVerses(new Set());
@@ -110,25 +107,20 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
         <div className="space-y-6">
             <Card>
                 <CardHeader>
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                         <div>
                             <CardTitle className="font-headline text-3xl">{getSurahName()} ({language === 'ar' ? surahDetails.englishName : surahDetails.name})</CardTitle>
                             <CardDescription>
                                 {getRevelationPlace()} - {surahDetails.numberOfAyahs} verses
                             </CardDescription>
                         </div>
-                        <div className="flex items-center gap-4">
-                             <div className="flex items-center space-x-2">
-                                <Switch
-                                    id="memorization-mode"
-                                    checked={memorizationMode}
-                                    onCheckedChange={setMemorizationMode}
-                                />
-                                <Label htmlFor="memorization-mode">Memorization</Label>
-                            </div>
-                            <Button onClick={handlePlayPause} disabled={isLoadingAudio} size="icon" variant="ghost" className="text-primary h-12 w-12 shrink-0">
-                                {isLoadingAudio ? <Loader className="animate-spin" /> : isPlaying ? <PauseCircle size={32} /> : <PlayCircle size={32} />}
-                            </Button>
+                        <div className="flex items-center space-x-2">
+                            <Switch
+                                id="memorization-mode"
+                                checked={memorizationMode}
+                                onCheckedChange={setMemorizationMode}
+                            />
+                            <Label htmlFor="memorization-mode">Memorization</Label>
                         </div>
                     </div>
                 </CardHeader>
@@ -137,7 +129,19 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
                         {surahDetails.verses.map((verse, index) => (
                             <div key={verse.id}>
                                 <div className="flex flex-col gap-4">
-                                     <p className="text-sm text-muted-foreground font-semibold bg-muted/50 w-fit px-2 py-1 rounded-md">Verse {verse.numberInSurah}</p>
+                                     <div className="flex items-center gap-4">
+                                        <Button 
+                                            onClick={() => handlePlayPause(verse)} 
+                                            size="icon" 
+                                            variant="ghost" 
+                                            className="text-primary w-8 h-8 shrink-0"
+                                        >
+                                            {playingVerseId === verse.id && isAudioPlaying ? <PauseCircle /> : <PlayCircle />}
+                                        </Button>
+                                        <p className="text-sm text-muted-foreground font-semibold bg-muted/50 w-fit px-2 py-1 rounded-md">
+                                            {surahDetails.number}:{verse.numberInSurah} &bull; Juz {verse.juz} &bull; Hizb {verse.hizbQuarter}
+                                        </p>
+                                     </div>
                                      <p className="text-2xl md:text-3xl font-serif text-right leading-loose tracking-wide">{verse.text}</p>
                                      <div
                                         className={cn(
@@ -163,7 +167,7 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
                     </div>
                 </CardContent>
             </Card>
-            {audioUrl && <audio ref={audioRef} src={audioUrl} onEnded={() => setIsPlaying(false)} className="hidden" />}
+            <audio ref={audioRef} className="hidden" />
         </div>
     );
 }
