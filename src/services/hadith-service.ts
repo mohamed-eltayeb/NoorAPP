@@ -19,16 +19,15 @@ export interface Hadith {
 const API_BASE_URL = 'https://hadithapi.com/api';
 
 async function fetchFromHadithAPI(endpoint: string): Promise<{ data: any } | { error: string }> {
-    const API_KEY = process.env.NEXT_PUBLIC_SUNNAH_API_KEY;
+    const API_KEY = process.env.NEXT_PUBLIC_HADITH_API_KEY;
 
     if (!API_KEY) {
-        return { error: "Hadith API key is missing. Please add the NEXT_PUBLIC_SUNNAH_API_KEY to your .env file and restart the server." };
+        return { error: "Hadith API key is missing. Please add the NEXT_PUBLIC_HADITH_API_KEY to your .env file and restart the server." };
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-            headers: { 'X-API-Key': API_KEY }
-        });
+        const url = `${API_BASE_URL}/${endpoint}${endpoint.includes('?') ? '&' : '?'}api_key=${API_KEY}`;
+        const response = await fetch(url);
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
