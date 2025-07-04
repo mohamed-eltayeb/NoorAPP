@@ -19,11 +19,12 @@ import { ThemeSwitcher } from '@/components/theme-switcher';
 import { BottomNav } from '@/components/bottom-nav';
 
 function LayoutWithLang({ children }: { children: ReactNode }) {
-  const { direction } = useLanguage();
+  const { language, direction } = useLanguage();
 
   useEffect(() => {
     document.documentElement.dir = direction;
-  }, [direction]);
+    document.documentElement.lang = language;
+  }, [language, direction]);
 
   return (
     <SidebarProvider>
