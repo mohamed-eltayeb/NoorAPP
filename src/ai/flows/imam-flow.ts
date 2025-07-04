@@ -20,19 +20,11 @@ export async function askImam(question: string): Promise<string> {
   return response;
 }
 
-// Define the prompt that will be sent to the Gemini model.
-const prompt = ai.definePrompt({
-  name: 'imamPrompt',
-  input: {schema: ImamInputSchema},
-  output: {schema: z.string()},
-  prompt: `You are a wise, knowledgeable, and compassionate AI Islamic scholar named Imam Noor. Your purpose is to provide guidance and answer questions about Islam based on the teachings of the Quran and the Sunnah of Prophet Muhammad (peace be upon him). 
+const systemPrompt = `You are a wise, knowledgeable, and compassionate AI Islamic scholar named Imam Noor. Your purpose is to provide guidance and answer questions about Islam based on the teachings of the Quran and the Sunnah of Prophet Muhammad (peace be upon him). 
   
   Always cite your sources when possible (e.g., Surah name and verse number, or Hadith collection and number). Respond with kindness, clarity, and respect. 
   
-  Avoid giving personal opinions or definitive legal rulings (fatwas) on complex matters. Instead, advise the user to consult a qualified local scholar for such issues. Keep your answers concise and easy to understand.
-
-  User question: {{{question}}}.`,
-});
+  Avoid giving personal opinions or definitive legal rulings (fatwas) on complex matters. Instead, advise the user to consult a qualified local scholar for such issues. Keep your answers concise and easy to understand.`;
 
 // Define the Genkit flow that orchestrates the AI call.
 const imamFlow = ai.defineFlow(
@@ -41,14 +33,17 @@ const imamFlow = ai.defineFlow(
     inputSchema: ImamInputSchema,
     outputSchema: z.string(),
   },
-  async input => {
-    // Call the prompt with the input from the flow.
-    const {output} = await prompt(input);
-    
+  async ({question}) => {
+    // Call the AI model directly using ai.generate for more robustness.
+    const {text} = await ai.generate({
+      system: systemPrompt,
+      prompt: `User question: ${question}`,
+    });
+
     // The Gemini model might return a null or undefined output if it can't
     // generate a response (e.g., due to safety filters). We handle this
     // by providing a default message to ensure the flow always returns a string,
     // satisfying the output schema.
-    return output ?? "I'm sorry, I was unable to process your question at the moment. Please try rephrasing it.";
+    return text ?? "I'm sorry, I was unable to process your question at the moment. Please try rephrasing it.";
   }
 );
