@@ -32,7 +32,7 @@ export function VerseOfTheDay() {
 
   if (loading) {
     return (
-      <Card className="lg:col-span-2 h-full">
+      <Card className="h-full">
         <CardHeader>
           <Skeleton className="h-8 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
@@ -53,7 +53,7 @@ export function VerseOfTheDay() {
 
   if (error) {
     return (
-      <Alert variant="destructive" className="lg:col-span-2">
+      <Alert variant="destructive">
         <Terminal className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
@@ -66,7 +66,7 @@ export function VerseOfTheDay() {
   }
 
   return (
-    <Card className="lg:col-span-2 h-full flex flex-col">
+    <Card className="h-full flex flex-col">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl font-bold font-headline">
           <Sparkles className="w-6 h-6 text-accent" />

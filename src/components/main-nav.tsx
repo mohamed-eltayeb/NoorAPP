@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Bookmark, Calendar, LayoutDashboard, ScrollText, ShieldCheck, RotateCw, Bot } from 'lucide-react';
+import { BookOpen, Bookmark, CalendarDays, HeartHandshake, LayoutDashboard, MessageSquareHeart, Repeat, ScrollText } from 'lucide-react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -15,10 +15,10 @@ export function MainNav() {
     { href: '/dashboard', label: 'Dashboard', icon: React.createElement(LayoutDashboard) },
     { href: '/quran', label: 'Quran', icon: React.createElement(BookOpen) },
     { href: '/hadith', label: 'Hadith', icon: React.createElement(ScrollText) },
-    { href: '/athkar', label: 'Athkar', icon: React.createElement(ShieldCheck) },
-    { href: '/tasbeeh', label: 'Tasbeeh', icon: React.createElement(RotateCw) },
-    { href: '/imam', label: 'AI Imam', icon: React.createElement(Bot) },
-    { href: '/calendar', label: 'Calendar', icon: React.createElement(Calendar) },
+    { href: '/athkar', label: 'Athkar', icon: React.createElement(HeartHandshake) },
+    { href: '/tasbeeh', label: 'Tasbeeh', icon: React.createElement(Repeat) },
+    { href: '/imam', label: 'AI Imam', icon: React.createElement(MessageSquareHeart) },
+    { href: '/calendar', label: 'Calendar', icon: React.createElement(CalendarDays) },
     { href: '/bookmarks', label: 'Bookmarks', icon: React.createElement(Bookmark) },
   ];
 
@@ -26,12 +26,12 @@ export function MainNav() {
     <SidebarMenu>
       {menuItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          <Link href={item.href} passHref legacyBehavior>
-            <SidebarMenuButton as="a" isActive={pathname.startsWith(item.href)} tooltip={item.label}>
-              {item.icon}
-              <span>{item.label}</span>
+            <SidebarMenuButton asChild isActive={pathname.startsWith(item.href)} tooltip={item.label}>
+              <Link href={item.href}>
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
             </SidebarMenuButton>
-          </Link>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
