@@ -141,9 +141,16 @@ export const bookmarks = [
 ];
 
 export const islamicEvents = [
-    { date: '2024-06-16', name: 'Eid al-Adha', color: 'hsl(var(--accent))' },
-    { date: '2024-07-07', name: 'Islamic New Year', color: 'hsl(var(--primary))' },
-    { date: '2024-07-16', name: 'Day of Ashura', color: 'hsl(var(--secondary-foreground))' },
+    { date: '2024-07-07', name: 'Islamic New Year (1446 AH)', color: 'hsl(var(--primary))' },
+    { date: '2024-07-16', name: 'Day of Ashura', color: 'hsl(var(--accent))' },
+    { date: '2024-09-15', name: 'Mawlid al-Nabi', color: 'hsl(var(--primary))' },
+    { date: '2025-01-27', name: 'Laylat al-Miraj', color: 'hsl(var(--accent))' },
+    { date: '2025-02-14', name: 'Laylat al-Bara\'at', color: 'hsl(var(--primary))' },
+    { date: '2025-03-01', name: 'Start of Ramadan', color: 'hsl(var(--accent))' },
+    { date: '2025-03-27', name: 'Laylat al-Qadr', color: 'hsl(var(--primary))' },
+    { date: '2025-03-31', name: 'Eid al-Fitr', color: 'hsl(var(--accent))' },
+    { date: '2025-06-06', name: 'Day of Arafah', color: 'hsl(var(--primary))' },
+    { date: '2025-06-07', name: 'Eid al-Adha', color: 'hsl(var(--accent))' },
 ];
 
 export const athkar = {
