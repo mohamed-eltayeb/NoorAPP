@@ -1,4 +1,3 @@
-'use client';
 
 import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -13,8 +12,18 @@ import { useLanguage } from '@/context/language-context';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { getSurah, SurahDetails } from '@/services/quran-service';
+import { getSurah, SurahDetails, getSurahs } from '@/services/quran-service';
 import { Skeleton } from '@/components/ui/skeleton';
+
+export async function generateStaticParams() {
+  const surahs = await getSurahs();
+ 
+  return surahs.map((surah) => ({
+    surahNumber: String(surah.number),
+  }));
+}
+
+'use client';
 
 const revelationPlaceTranslations = {
   Meccan: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
