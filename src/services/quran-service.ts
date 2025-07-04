@@ -76,11 +76,11 @@ export async function getSurah(surahNumber: number): Promise<SurahDetails | null
     const translationFrData = translationFrRes.ok ? await translationFrRes.json() : { translations: [] };
     const audioData = audioRes.ok ? await audioRes.json() : { audio_files: [] };
 
-    const translationsEnMap = new Map(translationEnData.translations.map((t: any) => [t.verse_key, t.text]));
-    const translationsFrMap = new Map(translationFrData.translations.map((t: any) => [t.verse_key, t.text]));
-    const audioMap = new Map(audioData.audio_files.map((a: any) => [a.verse_key, a.audio_url]));
+    const translationsEnMap = new Map((translationEnData.translations || []).map((t: any) => [t.verse_key, t.text]));
+    const translationsFrMap = new Map((translationFrData.translations || []).map((t: any) => [t.verse_key, t.text]));
+    const audioMap = new Map((audioData.audio_files || []).map((a: any) => [a.verse_key, a.audio_url]));
 
-    const verses: Verse[] = versesData.verses.map((verse: any) => {
+    const verses: Verse[] = (versesData.verses || []).map((verse: any) => {
       const verseNum = verse.verse_key.split(':')[1];
       const enText = translationsEnMap.get(verse.verse_key) || "Translation not available.";
 
