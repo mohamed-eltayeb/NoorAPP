@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -18,8 +19,12 @@ const isSameDay = (d1: Date, d2: Date) => {
 };
 
 export default function CalendarPage() {
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const [date, setDate] = React.useState<Date | undefined>();
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    setDate(new Date());
+  }, []);
 
   // Memoize event dates, adjusting for timezone to prevent off-by-one day errors
   const eventDates = React.useMemo(() => islamicEvents.map(event => {
@@ -83,6 +88,7 @@ export default function CalendarPage() {
               className="w-full"
               modifiers={modifiers}
               modifiersStyles={modifiersStyles}
+              disabled={!date}
             />
           </CardContent>
         </Card>

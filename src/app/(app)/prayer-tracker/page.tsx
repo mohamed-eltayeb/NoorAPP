@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Progress } from "@/components/ui/progress";
@@ -32,8 +32,12 @@ const formatDate = (date: Date): string => {
 };
 
 export default function PrayerTrackerPage() {
-    const [date, setDate] = useState<Date | undefined>(new Date());
+    const [date, setDate] = useState<Date | undefined>();
     const { prayerLog, updatePrayerStatus } = usePrayerTracker();
+
+    useEffect(() => {
+        setDate(new Date());
+    }, []);
 
     const selectedDateKey = date ? formatDate(date) : '';
     
@@ -70,6 +74,7 @@ export default function PrayerTrackerPage() {
                         selected={date}
                         onSelect={setDate}
                         className="w-full"
+                        disabled={!date}
                         />
                     </CardContent>
                 </Card>
