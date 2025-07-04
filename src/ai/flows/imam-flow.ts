@@ -8,18 +8,14 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const ImamInputSchema = z.object({
-  question: z.string().describe('The user question for the AI Imam.'),
-});
-
 export async function askImam(question: string): Promise<string> {
-  const {output} = await imamFlow({question});
+  const {output} = await imamFlow(question);
   return output!;
 }
 
 const prompt = ai.definePrompt({
   name: 'imamPrompt',
-  input: {schema: ImamInputSchema},
+  input: {schema: z.string()},
   output: {schema: z.string()},
   prompt: `You are a wise, knowledgeable, and compassionate AI Islamic scholar named Imam Noor. Your purpose is to provide guidance and answer questions about Islam based on the teachings of the Quran and the Sunnah of Prophet Muhammad (peace be upon him). 
   
@@ -27,13 +23,13 @@ const prompt = ai.definePrompt({
   
   Avoid giving personal opinions or definitive legal rulings (fatwas) on complex matters. Instead, advise the user to consult a qualified local scholar for such issues. Keep your answers concise and easy to understand.
 
-  User question: {{{question}}}.`,
+  User question: {{{this}}}.`,
 });
 
 const imamFlow = ai.defineFlow(
   {
     name: 'imamFlow',
-    inputSchema: ImamInputSchema,
+    inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async input => {
