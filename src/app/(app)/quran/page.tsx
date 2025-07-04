@@ -11,8 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const revelationPlaceTranslations = {
-  Meccan: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
-  Medinan: { en: 'Medinan', ar: 'مدنية', fr: 'Médinoise' },
+  makkah: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
+  madinah: { en: 'Medinan', ar: 'مدنية', fr: 'Médinoise' },
 };
 
 export default function QuranPage() {

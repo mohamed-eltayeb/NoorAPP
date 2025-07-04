@@ -12,8 +12,8 @@ import { cn } from '@/lib/utils';
 import type { SurahDetails, Verse } from '@/services/quran-service';
 
 const revelationPlaceTranslations = {
-  Meccan: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
-  Medinan: { en: 'Medinan', ar: 'مدنية', fr: 'Médinoise' },
+  makkah: { en: 'Meccan', ar: 'مكية', fr: 'Mecquoise' },
+  madinah: { en: 'Medinan', ar: 'مدنية', fr: 'Médinoise' },
 };
 
 // This is the Client Component that handles all user interaction.
@@ -140,7 +140,7 @@ export function SurahView({ surahDetails }: { surahDetails: SurahDetails }) {
                                             {playingVerseId === verse.id && isAudioPlaying ? <PauseCircle /> : <PlayCircle />}
                                         </Button>
                                         <p className="text-sm text-muted-foreground font-semibold bg-muted/50 w-fit px-2 py-1 rounded-md">
-                                            {surahDetails.number}:{verse.numberInSurah} &bull; Juz {verse.juz} &bull; Hizb {verse.hizbQuarter}
+                                            {surahDetails.number}:{verse.numberInSurah} &bull; Juz {verse.juz} &bull; Hizb {verse.hizb}
                                         </p>
                                      </div>
                                      <p className="text-2xl md:text-3xl font-serif text-right leading-loose tracking-wide">{verse.text}</p>

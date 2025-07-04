@@ -1,40 +1,91 @@
-
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { getHadithsForCollection } from '@/lib/placeholder-data';
+import { getHadithsByCollection, Hadith } from '@/services/hadith-service';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Search, Bookmark, Copy, Terminal } from 'lucide-react';
+import { ArrowLeft, Bookmark, Copy, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function HadithCollectionPage() {
     const params = useParams();
     const { toast } = useToast();
     const collectionSlug = params.collectionSlug as string;
     
-    const collectionData = getHadithsForCollection(collectionSlug);
-    
-    const [searchTerm, setSearchTerm] = useState('');
+    const [hadiths, setHadiths] = useState<Hadith[]>([]);
+    const [collectionTitle, setCollectionTitle] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    if (!collectionData) {
+    useEffect(() => {
+        const fetchHadiths = async () => {
+            if (!collectionSlug) return;
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await getHadithsByCollection(collectionSlug);
+                setHadiths(data);
+                if (data.length > 0) {
+                    const firstHadith = data[0];
+                    const collection = firstHadith.collection;
+                    const response = await fetch(`https://api.sunnah.com/v1/collections/${collection}`, { headers: {'X-API-Key': process.env.NEXT_PUBLIC_SUNNAH_API_KEY || ''}});
+                    const collectionData = await response.json();
+                    setCollectionTitle(collectionData.data.title);
+                }
+            } catch (e: any) {
+                setError(e.message || `Failed to load hadiths for ${collectionSlug}.`);
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchHadiths();
+    }, [collectionSlug]);
+
+    if (loading) {
+        return (
+            <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 w-10" />
+                    <div>
+                        <Skeleton className="h-8 w-48" />
+                        <Skeleton className="h-5 w-64 mt-1" />
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <Card key={i}>
+                            <CardContent className="p-6 space-y-4">
+                                <Skeleton className="h-5 w-full" />
+                                <Skeleton className="h-5 w-5/6" />
+                                <div className="flex items-center justify-between mt-4">
+                                    <Skeleton className="h-6 w-24" />
+                                    <div className="flex gap-2">
+                                        <Skeleton className="h-8 w-8" />
+                                        <Skeleton className="h-8 w-8" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    
+    if (error) {
         return (
              <Alert variant="destructive">
                 <Terminal className="h-4 w-4" />
-                <AlertTitle>Collection Not Found</AlertTitle>
-                <AlertDescription>The requested Hadith collection could not be found.</AlertDescription>
+                <AlertTitle>Error Loading Hadiths</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
             </Alert>
         )
     }
-
-    const filteredHadiths = collectionData.hadiths.filter(hadith =>
-        hadith.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hadith.reference.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text);
@@ -42,6 +93,15 @@ export default function HadithCollectionPage() {
             title: "Copied to clipboard!",
             description: "The hadith text has been copied.",
         });
+    }
+
+    const getHadithText = (hadith: Hadith) => {
+      const hadithContent = hadith.hadith.find(h => h.lang === 'en');
+      return hadithContent ? hadithContent.body : 'No English translation available.';
+    }
+
+    const getHadithReference = (hadith: Hadith) => {
+      return `${collectionTitle}, Hadith ${hadith.hadithNumber}`;
     }
 
     return (
@@ -54,31 +114,21 @@ export default function HadithCollectionPage() {
                     </Link>
                 </Button>
                 <div>
-                    <h1 className="text-3xl font-bold font-headline tracking-tight">{collectionData.name}</h1>
-                    <p className="text-muted-foreground">Browse and search hadiths from this collection.</p>
+                    <h1 className="text-3xl font-bold font-headline tracking-tight">{collectionTitle || 'Loading...'}</h1>
+                    <p className="text-muted-foreground">Browse hadiths from this collection.</p>
                 </div>
             </div>
 
-            <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input
-                    placeholder={`Search in ${collectionData.name}...`}
-                    className="pl-10"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
-
             <div className="space-y-4">
-                {filteredHadiths.length > 0 ? (
-                    filteredHadiths.map(hadith => (
-                        <Card key={hadith.id}>
+                {hadiths.length > 0 ? (
+                    hadiths.map(hadith => (
+                        <Card key={hadith.urn}>
                             <CardContent className="p-6 space-y-4">
-                                <p className="text-lg leading-relaxed">{hadith.text}</p>
+                                <p className="text-lg leading-relaxed">{getHadithText(hadith)}</p>
                                 <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                    <p className="font-semibold">{hadith.reference}</p>
+                                    <p className="font-semibold">{getHadithReference(hadith)}</p>
                                     <div className="flex items-center gap-2">
-                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCopy(hadith.text)}>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCopy(getHadithText(hadith))}>
                                             <Copy className="h-4 w-4" />
                                             <span className="sr-only">Copy</span>
                                         </Button>
@@ -95,7 +145,7 @@ export default function HadithCollectionPage() {
                      <Card className="flex flex-col items-center justify-center p-12 text-center">
                         <CardHeader>
                             <CardTitle className="font-headline">No Hadiths Found</CardTitle>
-                            <p className="text-muted-foreground">Your search for &quot;{searchTerm}&quot; did not match any hadiths in this collection.</p>
+                            <p className="text-muted-foreground">No hadiths were found for this collection.</p>
                         </CardHeader>
                     </Card>
                 )}
