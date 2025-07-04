@@ -96,6 +96,23 @@ export default function QuranPage() {
     );
   }
 
+  if (surahs.length === 0) {
+    return (
+       <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold font-headline tracking-tight">The Holy Quran</h1>
+          <p className="text-muted-foreground">Browse and read all 114 Surahs.</p>
+        </div>
+         <Card className="flex flex-col items-center justify-center p-12 text-center">
+            <CardHeader>
+                <CardTitle className="font-headline">No Surahs Found</CardTitle>
+                <p className="text-muted-foreground">Could not load Surahs from the API. Please try again later.</p>
+            </CardHeader>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
