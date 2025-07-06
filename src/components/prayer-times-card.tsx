@@ -4,9 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Compass, MapPin, Moon, Sun, SunMedium, Sunrise, Sunset, AlertCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { getPrayerInfo, PrayerInfoOutput } from "@/ai/flows/prayer-flow";
+// import { getPrayerInfo, PrayerInfoOutput } from "@/ai/flows/prayer-flow"; // Disabled for mobile build
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
+
+// Local type definition for prayer data
+type PrayerInfoOutput = {
+    location: string;
+    timings: {
+        Fajr: string;
+        Dhuhr: string;
+        Asr: string;
+        Maghrib: string;
+        Isha: string;
+    };
+    qibla: number;
+};
 
 const prayerIcons: { [key: string]: React.ReactElement } = {
     Fajr: <Sunrise className="w-5 h-5" />,
@@ -34,8 +47,19 @@ export function PrayerTimesCard() {
             async (position) => {
                 try {
                     const { latitude, longitude } = position.coords;
-                    const prayerData = await getPrayerInfo({ latitude, longitude });
-                    setData(prayerData);
+                    // Static prayer times for mobile build
+                    const staticPrayerData = {
+                        location: "Your Location",
+                        timings: {
+                            Fajr: "05:30",
+                            Dhuhr: "12:15",
+                            Asr: "15:45",
+                            Maghrib: "18:20",
+                            Isha: "19:45"
+                        },
+                        qibla: 45 // Example qibla direction
+                    };
+                    setData(staticPrayerData);
                 } catch (apiError) {
                     console.error(apiError);
                     setError("Could not fetch prayer times. Please try again later.");

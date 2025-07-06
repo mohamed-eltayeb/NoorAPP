@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { askImam } from '@/ai/flows/imam-flow';
+// import { askImam } from '@/ai/flows/imam-flow'; // Disabled for mobile build
 import { Bot, Loader, Send, User } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
@@ -30,7 +30,8 @@ export default function ImamPage() {
     setIsLoading(true);
 
     try {
-      const response = await askImam(input);
+      // Placeholder response for mobile build - replace with API call to your backend
+      const response = "As-Salaam-Alaikum! Thank you for your question. This feature is currently being prepared for mobile. In the meantime, please consult with your local Imam or Islamic scholar for guidance on your question: '" + input + "'";
       const modelMessage: Message = { role: 'model', content: response };
       setMessages((prev) => [...prev, modelMessage]);
     } catch (error) {
